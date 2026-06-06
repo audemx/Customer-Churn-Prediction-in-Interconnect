@@ -79,3 +79,38 @@ Para garantizar la calidad de los datos antes del modelado, se ejecutaron las si
 *   **Normalización Global:** Transformación completa del esquema de columnas a la nomenclatura estandarizada `snake_case` en minúsculas para evitar conflictos de sintaxis.
 *   **Coerción Financiera:** La variable `total_charges` se transformó a tipo flotante continuo (`float64`). 
 *   **Tratamiento de Nulos:** Se detectaron **11 registros vacíos** en la facturación total. Tras un análisis cruzado, se determinó que correspondían a clientes nuevos en su primer mes de ciclo de vida, por lo que se imputaron justificadamente con `0.0`.
+
+---
+
+## 6. Evaluación Final y Resultados del Modelo
+
+Tras realizar un benchmark competitivo e iterativo entre múltiples arquitecturas, se evaluó el desempeño del modelo ganador utilizando un conjunto de prueba independiente con datos 100% inéditos.
+
+### Modelo Seleccionado e Hiperparámetros
+* **Algoritmo:** `LightGBM Classifier` optimizado mediante validación cruzada estructurada de 5 pliegues (`GridSearchCV`).
+* **Configuración Óptima:** `{'learning_rate': 0.1, 'max_depth': 6, 'n_estimators': 150, 'num_leaves': 31}` combinado con un peso balanceado de clases (`class_weight='balanced'`).
+
+### Métricas de Calidad Obtenidas (Test Set)
+* **Métrica Principal (AUC-ROC):** **`0.9073`** * *Nota:* Excede con creces el umbral mínimo comercial requerido por el negocio ($\ge 0.88$).
+* **Métrica Secundaria (Accuracy):** **`0.8304`** (Aproximadamente el 83.04% de las predicciones globales fueron correctas).
+
+```mermaid
+graph TD
+    A[Dataset Histórico] --> B(Modelos Lineales: Regresión Logística <br> AUC: 0.84)
+    A --> C(Modelos de Ensamble: Random Forest <br> AUC: 0.86)
+    A --> D(Gradient Boosting: LightGBM <br> AUC: 0.9073)
+    
+    style D fill:#d4edda,stroke:#28a745,stroke-width:2px;
+```
+---
+
+## 7. Conclusiones Técnicas y Decisiones de Negocio Adoptadas
+Al consolidar este sistema de analítica predictiva, se resolvieron las principales variables e incertidumbres comerciales planteadas al inicio del proyecto:
+
+1.  **Definición del Presente Comercial:** Se adoptó estrictamente el 1 de febrero de 2020 como fecha de corte para el cálculo de la antigüedad (customer_lifetime) de los clientes activos, garantizando la consistencia temporal del pipeline.
+
+2.  **Mitigación de la Fuga de Datos (Data Leakage):** Se eliminaron de forma quirúrgica las columnas de fechas específicas (begin_date, end_date) previos al modelado, forzando a los algoritmos a aprender de patrones de comportamiento reales y no de marcas de tiempo relativas.
+
+3.  **Tratamiento de Clientes Nuevos:** Se detectaron 11 registros con cargos nulos correspondientes a usuarios en su primer mes de contratación. Se imputaron justificadamente con 0.0, blindando matemáticamente los algoritmos sin distorsionar la distribución financiera.
+
+4.  **Impacto en el Retorno de Inversión (ROI):** Al alcanzar un AUC-ROC de 0.9073, el negocio cuenta con una herramienta predictiva de alta fidelidad. Esto permite al equipo de marketing digital automatizar campañas de retención quirúrgicas (códigos promocionales, incentivos financieros), reduciendo drásticamente el gasto por falsos positivos y maximizando el rescate de clientes en riesgo real de deserción.
