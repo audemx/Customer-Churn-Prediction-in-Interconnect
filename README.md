@@ -19,13 +19,20 @@ Al anticipar qué clientes planean cancelar sus servicios, el equipo de marketin
 
 Para garantizar la reproducibilidad científica y el rigor técnico, el pipeline se estructura en 6 fases secuenciales:
 
-  ┌───────────────────┐      ┌─────────────────┐      ┌─────────────────┐
-  │ 1. Infraestructura│ ───> │     2. EDA      │ ───> │  3. Engineering │ ─┐
-  └───────────────────┘      └─────────────────┘      └─────────────────┘  │
-                                                                           │
-  ┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐    │
-  │  6. Evaluación  │ <─── │ 5. Optimización │ <───   4. Preparación  │ <──┘
-  └─────────────────┘      └─────────────────┘      └─────────────────┘
+```mermaid
+graph LR
+    %% Configuración de Estilos
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px,color:#000;
+    classDef highlight fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#01579b;
+
+    1[1. Infraestructura] --> 2[2. EDA]
+    2 --> 3[3. Engineering]
+    3 --> 4[4. Preparación]
+    4 --> 5[5. Optimización]
+    5 --> 6[6. Evaluación]
+
+    class 5,6 highlight;
+```
 
 1.  **Aislamiento de Infraestructura (`tabular_classification`):** Implementación de un entorno virtual especializado en arquitecturas híbridas para datos tabulares (Gradient Boosting + Deep Learning acelerado por hardware).
 2.  **Análisis Exploratorio de Datos (EDA):** Diagnóstico e integración multinivel de 4 silos de información (`contract`, `personal`, `internet`, `phone`) utilizando `customer_id` como llave primaria.
